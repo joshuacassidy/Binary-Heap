@@ -2,24 +2,24 @@ public class Heap implements IHeap {
 
     private int capacity;
     private int size;
-    private Integer[] pq;
+    private Integer[] heap;
 
     public Heap() {
         this.capacity = 10;
         this.size = 0;
-        this.pq = new Integer[capacity];
+        this.heap = new Integer[capacity];
     }
 
     public Integer peek() {
-        return isEmpty() ? null : pq[0];
+        return isEmpty() ? null : heap[0];
     }
 
     public Integer remove() {
         if (isEmpty()) {
             return null;
         } else {
-            Integer item = pq[0];
-            pq[0] = pq[size-1];
+            Integer item = heap[0];
+            heap[0] = heap[size - 1];
             size--;
             heapifyDown();
             return item;
@@ -28,28 +28,28 @@ public class Heap implements IHeap {
 
     public void add(Integer item) {
         resize();
-        pq[size] = item;
+        heap[size] = item;
         size++;
         heapifyUp();
     }
 
     private void heapifyUp() {
         int index = size-1;
-        while (hasParent(index) && getParent(index) > pq[index]) {
-            swap(getParent(index), index);
-            index = getParent(index);
+        while (hasParent(index) && getParent(index) > heap[index]) {
+            swap(getParentIndex(index), index);
+            index = getParentIndex(index);
         }
     }
 
     private void heapifyDown() {
         int index = 0;
         while (hasLeftChild(index)) {
-            int smallerChildIndex = 2*index+1;
-            if (hasRightChild(index) && getRightChild(index) < getLeftChild(index)) {
-                smallerChildIndex = 2*index+2;
+            int smallerChildIndex = getLeftIndex(index);
+            if (hasRightChild(index) && getRight(index) < getLeft(index)) {
+                smallerChildIndex = getRightIndex(index);
             }
 
-            if(pq[index] < pq[smallerChildIndex]) {
+            if(heap[index] != null && heap[index] < heap[smallerChildIndex]) {
                 break;
             } else {
                 swap(index, smallerChildIndex);
@@ -60,10 +60,20 @@ public class Heap implements IHeap {
     }
 
 
+
+    public int getLeftIndex(int index) {
+        return 2 * index +1;
+    }
+
+    public int getRightIndex(int index) {
+        return 2 * index +2;
+    }
+
+
     private void swap(int i, int j) {
-        int temp = pq[i];
-        pq[i] = pq[j];
-        pq[j] = temp;
+        Integer temp = heap[i];
+        heap[i] = heap[j];
+        heap[j] = temp;
     }
 
     public boolean isEmpty() {
@@ -72,25 +82,29 @@ public class Heap implements IHeap {
 
     private void resize() {
         if (size == capacity) {
-            Integer[] temp = pq;
+            Integer[] temp = heap;
             capacity*=2;
-            pq = new Integer[capacity];
+            heap = new Integer[capacity];
             for (int i = 0; i < temp.length; i++) {
-                pq[i]=temp[i];
+                heap[i]=temp[i];
             }
         }
     }
 
-    private int getLeftChild(int index) {
-        return pq[2*index+1];
+    private int getLeft(int index) {
+        return heap[2*index+1];
     }
 
-    private int getRightChild(int index) {
-        return pq[2*index+2];
+    private int getRight(int index) {
+        return heap[2*index+2];
     }
 
     private int getParent(int index) {
-        return pq[(index - 1)/2];
+        return heap[(index - 1)/2];
+    }
+
+    private int getParentIndex(int index) {
+        return (index - 1)/2;
     }
 
     private boolean hasLeftChild(int index) {
@@ -108,8 +122,8 @@ public class Heap implements IHeap {
     @Override
     public String toString() {
         String str = "[";
-        for (int i = 0; i < pq.length; i++) {
-            str+=i == pq.length-1 ? pq[i]+"]" : pq[i]+", ";
+        for (int i = 0; i < size; i++) {
+            str+=i == size-1 ? heap[i]+"]" : heap[i]+", ";
         }
         return str;
     }

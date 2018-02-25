@@ -9,6 +9,11 @@ public class Main {
         heap.add(5);
         heap.remove();
         heap.remove();
+        heap.add(4);
+        heap.add(5);
+        heap.add(4);
+        heap.add(3);
+        heap.add(1);
         System.out.println(heap);
     }
 
